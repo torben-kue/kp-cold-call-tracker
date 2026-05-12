@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cold Call Tracker – Kühneweg & Partner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f4f4f2;
+    --surface: #ffffff;
+    --surface2: #f1f0ec;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.16);
+    --text: #141413;
+    --text2: #6b6b67;
+    --text3: #9e9e9a;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --blue: #185FA5;
+    --blue-bg: #E6F1FB;
+    --blue-mid: #B5D4F4;
+    --blue-dark: #0C447C;
+    --amber: #854F0B;
+    --amber-bg: #FAEEDA;
+    --amber-mid: #FAC775;
+    --amber-dark: #633806;
+    --green: #3B6D11;
+    --green-bg: #EAF3DE;
+    --green-mid: #C0DD97;
+    --green-dark: #27500A;
+    --red: #A32D2D;
+    --red-bg: #FCEBEB;
+    --red-border: #F09595;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181816;
+      --surface: #222220;
+      --surface2: #2c2c2a;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.16);
+      --text: #f0efe9;
+      --text2: #a0a09c;
+      --text3: #6b6b67;
+      --blue: #85B7EB;
+      --blue-bg: #0c2a47;
+      --blue-mid: #185FA5;
+      --blue-dark: #B5D4F4;
+      --amber: #EF9F27;
+      --amber-bg: #3a2200;
+      --amber-mid: #854F0B;
+      --amber-dark: #FAC775;
+      --green: #97C459;
+      --green-bg: #1a3008;
+      --green-mid: #3B6D11;
+      --green-dark: #C0DD97;
+      --red: #F09595;
+      --red-bg: #3a1212;
+      --red-border: #A32D2D;
+      --shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    padding: 2rem 1.5rem;
+  }
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ─────────────────────────────────────────── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    gap: 12px;
+  }
+  .header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .header-left h1 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .header-left p {
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .save-indicator {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .save-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green-mid);
+    transition: background 0.3s;
+  }
+  .save-dot.saving { background: var(--amber-mid); }
+  .reset-btn {
+    font-size: 12px;
+    font-family: inherit;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 0.5px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .reset-btn:hover { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+
+  /* ── Confirm box ─────────────────────────────────────── */
+  .confirm-box {
+    display: none;
+    background: var(--red-bg);
+    border: 0.5px solid var(--red-border);
+    border-radius: var(--radius-sm);
+    padding: 10px 16px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--red);
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .confirm-box.visible { display: flex; }
+  .confirm-yes {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .confirm-no {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    background: transparent;
+    color: var(--red);
+    border: 0.5px solid var(--red-border);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  /* ── Main tracker row ────────────────────────────────── */
+  .tracker-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+  }
+
+  /* Groups: session + performance */
+  .tracker-group {
+    display: flex;
+    flex: 1;
+    align-items: stretch;
+  }
+
+  /* Label above each group */
+  .group-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0;
+  }
+  .group-header {
+    padding: 10px 16px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .group-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+  .group-divider-line {
+    flex: 1;
+    height: 0.5px;
+    background: var(--border);
+  }
+  .group-cells {
+    display: flex;
+    flex: 1;
+    align-items: stretch;
+  }
+
+  /* Vertical separator between session and performance */
+  .section-sep {
+    width: 0.5px;
+    background: var(--border2);
+    flex-shrink: 0;
+    margin: 12px 0;
+  }
+
+  /* Individual cell */
+  .cell {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 16px 16px 16px;
+    flex: 1;
+    min-width: 0;
+    position: relative;
+  }
+  .cell + .cell::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 0.5px;
+    background: var(--border);
+  }
+
+  .cell-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cell-value {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .cell-value.blue   { color: var(--blue); }
+  .cell-value.green  { color: var(--green); }
+  .cell-value.amber  { color: var(--amber); }
+  .cell-value.timer  { font-size: 20px; letter-spacing: -0.02em; color: var(--text); font-weight: 500; }
+
+  /* Percentage badge inline with value */
+  .value-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .pct-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    align-self: flex-end;
+    margin-bottom: 2px;
+  }
+  .pct-blue  { background: var(--blue-bg);  color: var(--blue-dark); }
+  .pct-amber { background: var(--amber-bg); color: var(--amber-dark); }
+  .pct-green { background: var(--green-bg); color: var(--green-dark); }
+
+  /* Abnahmequote as small badge cell */
+  .aq-cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 16px 16px 16px;
+    min-width: 90px;
+    position: relative;
+  }
+  .aq-cell::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 0.5px;
+    background: var(--border);
+  }
+  .aq-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text2);
+    white-space: nowrap;
+  }
+  .aq-value {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--green);
+  }
+
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 5px;
+    margin-top: auto;
+  }
+  .btn-sm {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.1s, transform 0.1s;
+    font-weight: 400;
+    line-height: 1;
+    user-select: none;
+    font-family: inherit;
+  }
+  .btn-sm:active { opacity: 0.5; transform: scale(0.93); }
+  .btn-minus-blue  { background: transparent; border: 0.5px solid var(--blue);  color: var(--blue); }
+  .btn-plus-blue   { background: var(--blue);  border: none; color: #fff; }
+  .btn-minus-green { background: transparent; border: 0.5px solid var(--green); color: var(--green); }
+  .btn-plus-green  { background: var(--green); border: none; color: #fff; }
+  .btn-minus-amber { background: transparent; border: 0.5px solid var(--amber); color: var(--amber); }
+  .btn-plus-amber  { background: var(--amber); border: none; color: #fff; }
+
+  .timer-btn {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    border: 0.5px solid var(--border2);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text2);
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    font-family: inherit;
+  }
+  .timer-btn:hover { background: var(--surface2); }
+  .timer-btn.running { border-color: var(--blue); color: var(--blue); background: var(--blue-bg); }
+
+  /* ── Responsive fallback ─────────────────────────────── */
+  @media (max-width: 900px) {
+    .tracker-card { flex-direction: column; }
+    .section-sep { width: 100%; height: 0.5px; margin: 0 12px; width: auto; }
+    .group-cells { flex-wrap: wrap; }
+    .cell { min-width: 120px; }
+  }
+  @media (max-width: 500px) {
+    body { padding: 1rem 0.75rem; }
+    .cell-value { font-size: 22px; }
+    .cell-value.timer { font-size: 17px; }
+    .aq-value { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-left">
+      <h1>Cold Call Tracker</h1>
+      <p id="sessionDate"></p>
+    </div>
+    <div class="header-right">
+      <div class="save-indicator">
+        <div class="save-dot" id="saveDot"></div>
+        <span id="saveLabel">Gespeichert</span>
+      </div>
+      <button class="reset-btn" onclick="askReset()">Zurücksetzen</button>
+    </div>
+  </div>
+
+  <div class="confirm-box" id="confirmBox">
+    <span>Alle Daten wirklich zurücksetzen?</span>
+    <div style="display:flex;gap:6px;">
+      <button class="confirm-no" onclick="cancelReset()">Abbrechen</button>
+      <button class="confirm-yes" onclick="doReset()">Ja, zurücksetzen</button>
+    </div>
+  </div>
+
+  <div class="tracker-card">
+
+    <!-- SESSION GROUP -->
+    <div class="group-wrapper">
+      <div class="group-header">
+        <span class="group-label">Session</span>
+        <div class="group-divider-line"></div>
+      </div>
+      <div class="group-cells">
+
+        <!-- Anwahlen -->
+        <div class="cell">
+          <div class="cell-label">Anwahlen</div>
+          <div class="cell-value blue" id="val-anrufe">0</div>
+          <div class="btn-row">
+            <button class="btn-sm btn-minus-blue" onclick="change('anrufe',-1)">−</button>
+            <button class="btn-sm btn-plus-blue" onclick="change('anrufe',1)">+</button>
+          </div>
+        </div>
+
+        <!-- Abnahmen -->
+        <div class="cell">
+          <div class="cell-label">Abnahmen</div>
+          <div class="cell-value green" id="val-abnahmen">0</div>
+          <div class="btn-row">
+            <button class="btn-sm btn-minus-green" onclick="change('abnahmen',-1)">−</button>
+            <button class="btn-sm btn-plus-green" onclick="change('abnahmen',1)">+</button>
+          </div>
+        </div>
+
+        <!-- Abnahmequote -->
+        <div class="aq-cell">
+          <div class="aq-label">Abnahmequote</div>
+          <div class="aq-value" id="pickupRate">0%</div>
+        </div>
+
+        <!-- Dauer / Timer -->
+        <div class="cell">
+          <div class="cell-label">Dauer</div>
+          <div class="cell-value timer" id="val-timer">00:00:00</div>
+          <div class="btn-row">
+            <button class="timer-btn" id="timerBtn" onclick="toggleTimer()">
+              <svg id="timerIcon" width="11" height="11" viewBox="0 0 12 12" fill="currentColor">
+                <polygon points="2,1 11,6 2,11"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SEPARATOR -->
+    <div class="section-sep"></div>
+
+    <!-- PERFORMANCE GROUP -->
+    <div class="group-wrapper">
+      <div class="group-header">
+        <span class="group-label">Performance</span>
+        <div class="group-divider-line"></div>
+      </div>
+      <div class="group-cells">
+
+        <!-- Entscheider erreicht -->
+        <div class="cell">
+          <div class="cell-label">Entscheider erreicht</div>
+          <div class="value-row">
+            <div class="cell-value blue" id="val-inhaber">0</div>
+            <div class="pct-badge pct-blue" id="pct-inhaber">0%</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-sm btn-minus-blue" onclick="change('inhaber',-1)">−</button>
+            <button class="btn-sm btn-plus-blue" onclick="change('inhaber',1)">+</button>
+          </div>
+        </div>
+
+        <!-- Pitch abgeschlossen -->
+        <div class="cell">
+          <div class="cell-label">Pitch abgeschlossen</div>
+          <div class="value-row">
+            <div class="cell-value amber" id="val-pitch">0</div>
+            <div class="pct-badge pct-amber" id="pct-pitch">0%</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-sm btn-minus-amber" onclick="change('pitch',-1)">−</button>
+            <button class="btn-sm btn-plus-amber" onclick="change('pitch',1)">+</button>
+          </div>
+        </div>
+
+        <!-- Termin vereinbart -->
+        <div class="cell">
+          <div class="cell-label">Termin vereinbart</div>
+          <div class="value-row">
+            <div class="cell-value green" id="val-termin">0</div>
+            <div class="pct-badge pct-green" id="pct-termin">0%</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-sm btn-minus-green" onclick="change('termin',-1)">−</button>
+            <button class="btn-sm btn-plus-green" onclick="change('termin',1)">+</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /.tracker-card -->
+
+</div><!-- /.container -->
+
+<script>
+const KEY = 'kp_cold_call_v1';
+
+let state = {
+  anrufe: 0, abnahmen: 0, inhaber: 0, pitch: 0, termin: 0,
+  elapsed: 0, running: false, startedAt: null, sessionDate: null
+};
+
+let interval = null;
+let saveTimer = null;
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      state = { ...state, ...s };
+      if (state.running && state.startedAt) {
+        const extra = Math.floor((Date.now() - state.startedAt) / 1000);
+        state.elapsed += extra;
+        state.startedAt = Date.now();
+        startInterval();
+      }
+    }
+  } catch(e) {}
+  if (!state.sessionDate) state.sessionDate = todayStr();
+  document.getElementById('sessionDate').textContent = state.sessionDate;
+  render();
+}
+
+function todayStr() {
+  return new Date().toLocaleDateString('de-DE', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+}
+
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {}
+  setSave('saved');
+}
+
+function scheduleSave() {
+  setSave('saving');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(save, 600);
+}
+
+function setSave(s) {
+  document.getElementById('saveDot').className = 'save-dot' + (s === 'saving' ? ' saving' : '');
+  document.getElementById('saveLabel').textContent = s === 'saving' ? 'Wird gespeichert…' : 'Gespeichert';
+}
+
+function change(k, d) {
+  state[k] = Math.max(0, state[k] + d);
+  render();
+  scheduleSave();
+}
+
+function render() {
+  document.getElementById('val-anrufe').textContent  = state.anrufe;
+  document.getElementById('val-abnahmen').textContent = state.abnahmen;
+  document.getElementById('val-inhaber').textContent  = state.inhaber;
+  document.getElementById('val-pitch').textContent    = state.pitch;
+  document.getElementById('val-termin').textContent   = state.termin;
+
+  const aqRate = state.anrufe > 0 ? Math.round(state.abnahmen / state.anrufe * 100) : 0;
+  document.getElementById('pickupRate').textContent = aqRate + '%';
+
+  const iPct = state.abnahmen > 0 ? Math.round(state.inhaber / state.abnahmen * 100) : 0;
+  const pPct = state.inhaber  > 0 ? Math.round(state.pitch   / state.inhaber  * 100) : 0;
+  const tPct = state.pitch    > 0 ? Math.round(state.termin  / state.pitch    * 100) : 0;
+  document.getElementById('pct-inhaber').textContent = iPct + '%';
+  document.getElementById('pct-pitch').textContent   = pPct + '%';
+  document.getElementById('pct-termin').textContent  = tPct + '%';
+
+  renderTimer();
+}
+
+function renderTimer() {
+  const s = state.elapsed;
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sc = s % 60;
+  document.getElementById('val-timer').textContent =
+    String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(sc).padStart(2,'0');
+
+  const btn  = document.getElementById('timerBtn');
+  const icon = document.getElementById('timerIcon');
+  if (state.running) {
+    btn.classList.add('running');
+    icon.innerHTML = '<rect x="1.5" y="1" width="3.5" height="10" rx="1"/><rect x="7" y="1" width="3.5" height="10" rx="1"/>';
+  } else {
+    btn.classList.remove('running');
+    icon.innerHTML = '<polygon points="2,1 11,6 2,11"/>';
+  }
+}
+
+function startInterval() {
+  clearInterval(interval);
+  interval = setInterval(() => {
+    state.elapsed++;
+    renderTimer();
+    if (state.elapsed % 15 === 0) save();
+  }, 1000);
+}
+
+function toggleTimer() {
+  if (state.running) {
+    state.running = false;
+    state.startedAt = null;
+    clearInterval(interval);
+  } else {
+    state.running = true;
+    state.startedAt = Date.now();
+    startInterval();
+  }
+  renderTimer();
+  save();
+}
+
+function askReset() {
+  document.getElementById('confirmBox').classList.add('visible');
+}
+function cancelReset() {
+  document.getElementById('confirmBox').classList.remove('visible');
+}
+function doReset() {
+  clearInterval(interval);
+  state = { anrufe:0, abnahmen:0, inhaber:0, pitch:0, termin:0, elapsed:0, running:false, startedAt:null, sessionDate:todayStr() };
+  document.getElementById('confirmBox').classList.remove('visible');
+  document.getElementById('sessionDate').textContent = state.sessionDate;
+  render();
+  localStorage.removeItem(KEY);
+  setSave('saved');
+}
+
+load();
+</script>
+</body>
+</html>
