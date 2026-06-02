@@ -8,16 +8,29 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
   :root {
     --bg:#f4f4f2; --surface:#fff; --surface2:#f1f0ec;
-    --border:rgba(0,0,0,.08); --border2:rgba(0,0,0,.16);
+    --border:rgba(0,0,0,.07); --border2:rgba(0,0,0,.14);
     --text:#141413; --text2:#6b6b67; --text3:#9e9e9a;
     --radius:14px; --radius-sm:8px;
-    --blue:#185FA5; --blue-bg:#E6F1FB; --blue-mid:#B5D4F4; --blue-dark:#0C447C;
-    --amber:#C86A00; --amber-bg:#FEF0DC; --amber-mid:#F5B060; --amber-dark:#7A4000;
-    --green:#3B6D11; --green-bg:#EAF3DE; --green-mid:#C0DD97; --green-dark:#27500A;
+    /* Blue */
+    --blue:#185FA5; --blue-bg:#E4EDFA; --blue-dark:#0C447C;
+    /* Slate – replaces teal (Abnahmen) */
+    --slate:#4A5878; --slate-bg:#EDF0F5; --slate-dark:#2D3A52;
+    /* Amber */
+    --amber:#B85C00; --amber-bg:#FEF4E8; --amber-dark:#7A3C00;
+    /* Rose */
+    --rose:#B03030; --rose-bg:#FEECEC; --rose-dark:#7A1C1C;
+    /* Purple */
+    --purple:#6338A0; --purple-bg:#F0EBFA; --purple-dark:#412470;
+    /* Green */
+    --green:#2E6B18; --green-bg:#EBF5EC; --green-mid:#C0DD97; --green-dark:#1C4A0E;
+    /* Neutral */
+    --neutral-bg:rgba(100,100,100,.04);
+    /* Status */
     --red:#A32D2D; --red-bg:#FCEBEB; --red-border:#F09595;
+    --green-mid2:#C0DD97; --amber-mid:#F5B060;
     --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
   }
   @media (prefers-color-scheme:dark){
@@ -25,198 +38,193 @@
       --bg:#181816; --surface:#222220; --surface2:#2c2c2a;
       --border:rgba(255,255,255,.08); --border2:rgba(255,255,255,.16);
       --text:#f0efe9; --text2:#a0a09c; --text3:#6b6b67;
-      --blue:#85B7EB; --blue-bg:#0c2a47; --blue-mid:#185FA5; --blue-dark:#B5D4F4;
-      --amber:#EF9F27; --amber-bg:#3a2200; --amber-mid:#854F0B; --amber-dark:#FAC775;
+      --blue:#85B7EB; --blue-bg:#0c2a47; --blue-dark:#B5D4F4;
+      --slate:#8898B8; --slate-bg:#1e2535; --slate-dark:#C0CCDC;
+      --amber:#E07800; --amber-bg:#3a2000; --amber-dark:#F5B060;
+      --rose:#E07070; --rose-bg:#3a1212; --rose-dark:#F0A0A0;
+      --purple:#A070E0; --purple-bg:#2a1848; --purple-dark:#CCA0F8;
       --green:#97C459; --green-bg:#1a3008; --green-mid:#3B6D11; --green-dark:#C0DD97;
+      --neutral-bg:rgba(255,255,255,.03);
       --red:#F09595; --red-bg:#3a1212; --red-border:#A32D2D;
+      --green-mid2:#3B6D11; --amber-mid:#854F0B;
       --shadow:0 1px 3px rgba(0,0,0,.3);
     }
   }
-  body{ background:var(--bg); color:var(--text); font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; min-height:100vh; padding:2rem 1.5rem; }
-  .container{ max-width:1500px; margin:0 auto; }
 
-  /* Header */
-  .header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; gap:12px; }
-  .header-left{ display:flex; align-items:baseline; gap:12px; }
-  .header-left h1{ font-size:15px; font-weight:600; letter-spacing:-.01em; }
-  .header-left p{ font-size:12px; color:var(--text3); }
-  .header-right{ display:flex; align-items:center; gap:10px; flex-shrink:0; }
-  .save-indicator{ display:flex; align-items:center; gap:5px; font-size:12px; color:var(--text3); }
-  .save-dot{ width:6px; height:6px; border-radius:50%; background:var(--green-mid); transition:background .3s; }
-  .save-dot.saving{ background:var(--amber-mid); }
-  .reset-btn{ font-size:12px; font-family:inherit; font-weight:500; padding:5px 12px; border-radius:6px; border:.5px solid var(--border2); background:transparent; color:var(--text2); cursor:pointer; transition:background .15s,color .15s,border-color .15s; }
-  .reset-btn:hover{ background:var(--red-bg); color:var(--red); border-color:var(--red-border); }
+  body { background:var(--bg); color:var(--text); font-family:'Inter',-apple-system,sans-serif; min-height:100vh; padding:2rem 1.5rem; }
+  .container { max-width:1600px; margin:0 auto; }
 
-  /* Confirm */
-  .confirm-box{ display:none; background:var(--red-bg); border:.5px solid var(--red-border); border-radius:var(--radius-sm); padding:10px 16px; margin-bottom:12px; font-size:13px; color:var(--red); align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
-  .confirm-box.visible{ display:flex; }
-  .confirm-yes{ font-family:inherit; font-size:12px; font-weight:500; padding:5px 12px; background:var(--red); color:#fff; border:none; border-radius:6px; cursor:pointer; }
-  .confirm-no{ font-family:inherit; font-size:12px; font-weight:500; padding:5px 12px; background:transparent; color:var(--red); border:.5px solid var(--red-border); border-radius:6px; cursor:pointer; }
+  /* ── Header ── */
+  .header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; gap:12px; }
+  .header-left { display:flex; align-items:baseline; gap:12px; }
+  .header-left h1 { font-size:15px; font-weight:600; letter-spacing:-.01em; }
+  .header-left p  { font-size:12px; color:var(--text3); }
+  .header-right   { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .save-indicator { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--text3); }
+  .save-dot { width:6px; height:6px; border-radius:50%; background:var(--green-mid2); transition:background .3s; }
+  .save-dot.saving { background:var(--amber-mid); }
+  .reset-btn { font-size:12px; font-family:inherit; font-weight:500; padding:5px 12px; border-radius:6px; border:.5px solid var(--border2); background:transparent; color:var(--text2); cursor:pointer; transition:background .15s,color .15s,border-color .15s; }
+  .reset-btn:hover { background:var(--red-bg); color:var(--red); border-color:var(--red-border); }
 
-  /* Tracker card */
-  .tracker-card{ background:var(--surface); border:.5px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); display:flex; align-items:stretch; overflow:hidden; }
+  /* ── Confirm ── */
+  .confirm-box { display:none; background:var(--red-bg); border:.5px solid var(--red-border); border-radius:var(--radius-sm); padding:10px 16px; margin-bottom:12px; font-size:13px; color:var(--red); align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .confirm-box.visible { display:flex; }
+  .confirm-yes { font-family:inherit; font-size:12px; font-weight:500; padding:5px 12px; background:var(--red); color:#fff; border:none; border-radius:6px; cursor:pointer; }
+  .confirm-no  { font-family:inherit; font-size:12px; font-weight:500; padding:5px 12px; background:transparent; color:var(--red); border:.5px solid var(--red-border); border-radius:6px; cursor:pointer; }
 
-  /* Group */
-  .group-wrapper{ display:flex; flex-direction:column; flex:1; }
-  .group-header{ padding:8px 11px 0 11px; display:flex; align-items:center; gap:8px; }
-  .group-label{ font-size:10px; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--text3); white-space:nowrap; }
-  .group-divider-line{ flex:1; height:.5px; background:var(--border); }
-  .group-cells{ display:flex; flex:1; align-items:stretch; }
+  /* ── Tracker card ── */
+  .tracker-card { background:var(--surface); border:.5px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); display:flex; align-items:stretch; overflow:hidden; }
 
-  /* Section sep */
-  .section-sep{ width:.5px; background:var(--border2); flex-shrink:0; margin:12px 0; }
+  /* ── Group ── */
+  .group-wrapper { display:flex; flex-direction:column; flex:1; }
+  .group-header  { padding:8px 12px 0 12px; display:flex; align-items:center; gap:8px; }
+  .group-label   { font-size:10px; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--text3); white-space:nowrap; }
+  .group-divider-line { flex:1; height:.5px; background:var(--border); }
+  .group-cells   { display:flex; flex:1; align-items:stretch; gap:5px; padding:5px 6px 7px 6px; }
 
-  /* Cell */
-  .cell{ display:flex; flex-direction:column; gap:6px; padding:10px 11px 12px 11px; flex:1; min-width:0; position:relative; }
-  .cell+.cell::before{ content:''; position:absolute; left:0; top:12px; bottom:12px; width:.5px; background:var(--border); }
-  .cell-label{ font-size:11px; font-weight:500; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .cell-value{ font-size:23px; font-weight:600; letter-spacing:-.03em; line-height:1; }
-  .cell-value.blue{ color:var(--blue); }
-  .cell-value.green{ color:var(--green); }
-  .cell-value.amber{ color:var(--amber); }
-  .cell-value.neutral{ color:var(--text); }
-  .cell-value.timer{ font-size:17px; letter-spacing:-.02em; font-weight:500; }
-  .value-row{ display:flex; align-items:center; gap:7px; }
-  .pct-badge{ font-size:11px; font-weight:600; padding:2px 7px; border-radius:20px; align-self:flex-end; margin-bottom:2px; }
-  .pct-blue{ background:var(--blue-bg); color:var(--blue-dark); }
-  .pct-amber{ background:var(--amber-bg); color:var(--amber-dark); }
-  .pct-green{ background:var(--green-bg); color:var(--green-dark); }
-  .aq-cell{ min-width:72px; justify-content:center; }
-  .aq-value{ font-size:23px; font-weight:600; letter-spacing:-.03em; line-height:1; color:var(--green); }
+  /* ── Section sep ── */
+  .section-sep { width:.5px; background:var(--border2); flex-shrink:0; margin:10px 0; }
 
-  /* Ziel */
-  .ziel-wrapper{ flex:0 0 auto; }
-  .ziel-cell{ min-width:72px; }
-  .ziel-input{ font-family:inherit; font-size:20px; font-weight:600; color:var(--text); background:transparent; border:none; border-bottom:1.5px solid var(--border2); width:50px; padding:1px 0; outline:none; letter-spacing:-.03em; -moz-appearance:textfield; }
-  .ziel-input::-webkit-inner-spin-button,.ziel-input::-webkit-outer-spin-button{ -webkit-appearance:none; margin:0; }
-  .ziel-input:focus{ border-bottom-color:var(--blue); }
-  .ziel-prog{ font-size:11px; color:var(--text3); margin-top:auto; line-height:1.4; }
-  .prog-pct{ font-weight:600; }
-  .prog-done{ color:var(--green); }
+  /* ── Cell base ── */
+  .cell { display:flex; flex-direction:column; gap:6px; padding:10px 11px 12px 11px; flex:1; min-width:0; border-radius:10px; }
+  /* no cell+cell separator – gap handles spacing */
 
-  /* Buttons */
-  .btn-row{ display:flex; gap:5px; margin-top:auto; }
-  .btn-sm{ width:24px; height:24px; border-radius:5px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:opacity .1s,transform .1s; font-weight:400; line-height:1; user-select:none; font-family:inherit; }
-  .btn-sm:active{ opacity:.5; transform:scale(.93); }
-  .btn-minus-blue{ background:transparent; border:.5px solid var(--blue); color:var(--blue); }
-  .btn-plus-blue{ background:var(--blue); border:none; color:#fff; }
-  .btn-minus-green{ background:transparent; border:.5px solid var(--green); color:var(--green); }
-  .btn-plus-green{ background:var(--green); border:none; color:#fff; }
-  .btn-minus-amber{ background:transparent; border:.5px solid var(--amber); color:var(--amber); }
-  .btn-plus-amber{ background:var(--amber); border:none; color:#fff; }
-  .timer-btn{ width:24px; height:24px; border-radius:5px; border:.5px solid var(--border2); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:background .15s,border-color .15s,color .15s; font-family:inherit; }
-  .timer-btn:hover{ background:var(--surface2); }
-  .timer-btn.running{ border-color:var(--blue); color:var(--blue); background:var(--blue-bg); }
+  /* ── Cell tile colors (subtle background per KPI) ── */
+  .tile-blue    { background:#E4EDFA; border:.5px solid #C2D5F0; }
+  .tile-slate   { background:#EDF0F5; border:.5px solid #CBD3DE; }
+  .tile-amber   { background:#FEF4E8; border:.5px solid #F2D9A8; }
+  .tile-rose    { background:#FEECEC; border:.5px solid #F2C0C0; }
+  .tile-purple  { background:#F0EBFA; border:.5px solid #D4C4EE; }
+  .tile-green   { background:#EBF5EC; border:.5px solid #B8D8BC; }
+  .tile-neutral { background:#F0F1F3; border:.5px solid #DDE0E5; }
 
-  /* ══════════ FLAME WRAPPER ══════════ */
-  .flame-wrapper{
-    flex:0 0 auto;
-    display:flex;
-    align-items:stretch;
-    border-left:.5px solid var(--border2);
+  /* ── Labels & values ── */
+  .cell-label { font-size:11px; font-weight:500; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .cell-value { font-size:23px; font-weight:600; letter-spacing:-.03em; line-height:1; }
+  .v-blue   { color:var(--blue); }
+  .v-slate  { color:var(--slate); }
+  .v-amber  { color:var(--amber); }
+  .v-rose   { color:var(--rose); }
+  .v-purple { color:var(--purple); }
+  .v-green  { color:var(--green); }
+  .v-neutral{ color:var(--text); }
+  .v-timer  { font-size:17px; letter-spacing:-.02em; font-weight:500; }
+  .value-row { display:flex; align-items:center; gap:6px; }
+
+  /* ── Pct badges ── */
+  .pct-badge { font-size:10px; font-weight:600; padding:2px 6px; border-radius:20px; align-self:flex-end; margin-bottom:1px; white-space:nowrap; }
+  .pb-blue   { background:var(--blue-bg);   color:var(--blue-dark); }
+  .pb-slate  { background:var(--slate-bg);  color:var(--slate-dark); }
+  .pb-amber  { background:var(--amber-bg);  color:var(--amber-dark); }
+  .pb-rose   { background:var(--rose-bg);   color:var(--rose-dark); }
+  .pb-purple { background:var(--purple-bg); color:var(--purple-dark); }
+  .pb-green  { background:var(--green-bg);  color:var(--green-dark); }
+
+  /* ── AQ cell ── */
+  .aq-cell { min-width:72px; justify-content:center; }
+  .aq-value { font-size:23px; font-weight:600; letter-spacing:-.03em; line-height:1; color:var(--slate); }
+
+  /* ── Ziel ── */
+  .ziel-wrapper { flex:0 0 auto; }
+  .ziel-cell { min-width:72px; }
+  .ziel-input { font-family:inherit; font-size:20px; font-weight:600; color:var(--text); background:transparent; border:none; border-bottom:1.5px solid var(--border2); width:50px; padding:1px 0; outline:none; letter-spacing:-.03em; -moz-appearance:textfield; }
+  .ziel-input::-webkit-inner-spin-button, .ziel-input::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+  .ziel-input:focus { border-bottom-color:var(--blue); }
+  .ziel-prog { font-size:11px; color:var(--text3); margin-top:auto; line-height:1.4; }
+  .prog-pct  { font-weight:600; }
+  .prog-done { color:var(--green); }
+
+  /* ── Buttons ── */
+  .btn-row { display:flex; gap:4px; margin-top:auto; }
+  .btn-sm  { width:24px; height:24px; border-radius:5px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:opacity .1s,transform .1s; font-weight:400; line-height:1; user-select:none; font-family:inherit; }
+  .btn-sm:active { opacity:.5; transform:scale(.93); }
+  .btn-m-blue   { background:transparent; border:.5px solid var(--blue);   color:var(--blue);   }
+  .btn-p-blue   { background:var(--blue);   border:none; color:#fff; }
+  .btn-m-slate  { background:transparent; border:.5px solid var(--slate);  color:var(--slate);  }
+  .btn-p-slate  { background:var(--slate);  border:none; color:#fff; }
+  .btn-m-amber  { background:transparent; border:.5px solid var(--amber);  color:var(--amber);  }
+  .btn-p-amber  { background:var(--amber);  border:none; color:#fff; }
+  .btn-m-rose   { background:transparent; border:.5px solid var(--rose);   color:var(--rose);   }
+  .btn-p-rose   { background:var(--rose);   border:none; color:#fff; }
+  .btn-m-purple { background:transparent; border:.5px solid var(--purple); color:var(--purple); }
+  .btn-p-purple { background:var(--purple); border:none; color:#fff; }
+  .btn-m-green  { background:transparent; border:.5px solid var(--green);  color:var(--green);  }
+  .btn-p-green  { background:var(--green);  border:none; color:#fff; }
+  .timer-btn { width:24px; height:24px; border-radius:5px; border:.5px solid var(--border2); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:background .15s,border-color .15s,color .15s; font-family:inherit; }
+  .timer-btn:hover { background:var(--surface2); }
+  .timer-btn.running { border-color:var(--blue); color:var(--blue); background:var(--blue-bg); }
+
+  /* ══════════ FLAME ══════════ */
+  .flame-wrapper { flex:0 0 auto; display:flex; align-items:stretch; border-left:.5px solid var(--border2); }
+  .flame-stats   { display:flex; flex-direction:column; justify-content:center; gap:10px; padding:12px; border-right:.5px solid var(--border); }
+  .fs-row  { display:flex; flex-direction:column; gap:2px; }
+  .fs-lbl  { font-size:9px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text3); }
+  .fs-val  { font-size:12px; font-weight:600; color:var(--text2); }
+  .fs-val.done { color:var(--green); }
+  .flame-panel { flex:0 0 74px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:12px 0 14px 0; gap:7px; }
+  .flame-scene { position:relative; width:50px; height:68px; transform-origin:center bottom; transition:transform .75s ease,opacity .75s ease,filter .75s ease; }
+  #flameSvg { position:absolute; top:0; left:0; width:100%; height:100%; overflow:visible; }
+  .fl-outer,.fl-mid,.fl-core,.fl-burst { transform-box:fill-box; transform-origin:center bottom; }
+  .fl-outer { animation:fo 2.2s ease-in-out infinite; }
+  .fl-mid   { animation:fm 1.5s ease-in-out infinite; }
+  .fl-core  { animation:fc 1.0s ease-in-out infinite; }
+  .fl-burst { opacity:0; pointer-events:none; }
+  .fl-burst.pop { animation:burst .55s ease-out forwards; }
+  @keyframes fo {
+    0%,100%{ transform:scaleX(1)   scaleY(1)   rotate(-2.2deg); }
+    10%    { transform:scaleX(.88) scaleY(1.10) rotate(1.8deg);  }
+    22%    { transform:scaleX(1.10)scaleY(.91)  rotate(-1deg);   }
+    35%    { transform:scaleX(.92) scaleY(1.07) rotate(2.5deg);  }
+    50%    { transform:scaleX(1.08)scaleY(.93)  rotate(-1.5deg); }
+    64%    { transform:scaleX(.90) scaleY(1.09) rotate(1.2deg);  }
+    78%    { transform:scaleX(1.06)scaleY(.94)  rotate(-2deg);   }
+    90%    { transform:scaleX(.94) scaleY(1.05) rotate(1.5deg);  }
   }
+  @keyframes fm {
+    0%,100%{ transform:scaleX(1)   scaleY(1)   rotate(1.5deg);  }
+    15%    { transform:scaleX(1.12)scaleY(.89)  rotate(-2deg);   }
+    32%    { transform:scaleX(.88) scaleY(1.12) rotate(1deg);    }
+    50%    { transform:scaleX(1.10)scaleY(.91)  rotate(-1.5deg); }
+    70%    { transform:scaleX(.90) scaleY(1.10) rotate(2deg);    }
+    88%    { transform:scaleX(1.08)scaleY(.93)  rotate(-1deg);   }
+  }
+  @keyframes fc {
+    0%,100%{ transform:scaleX(1)   scaleY(1);   }
+    25%    { transform:scaleX(.82) scaleY(1.18); }
+    55%    { transform:scaleX(1.18)scaleY(.84);  }
+    80%    { transform:scaleX(.88) scaleY(1.12); }
+  }
+  @keyframes burst {
+    0%  { opacity:.75; transform:scaleX(1)  scaleY(1)   translateY(0);    }
+    45% { opacity:.30; transform:scaleX(.70)scaleY(1.45)translateY(-16px); }
+    100%{ opacity:0;   transform:scaleX(.45)scaleY(1.80)translateY(-28px); }
+  }
+  .flame-label { font-size:10px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text3); text-align:center; transition:color .75s ease; white-space:nowrap; }
 
-  /* ── Flame stats (left of flame) ── */
-  .flame-stats{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    gap:10px;
-    padding:12px 12px 12px 12px;
-    border-right:.5px solid var(--border);
+  @media (prefers-color-scheme:dark){
+    .tile-blue    { background:rgba(30,58,138,.28);  border:.5px solid rgba(59,130,246,.22); }
+    .tile-slate   { background:rgba(40,50,80,.30);   border:.5px solid rgba(140,160,200,.20);}
+    .tile-amber   { background:rgba(120,53,15,.28);  border:.5px solid rgba(217,119,6,.22);  }
+    .tile-rose    { background:rgba(127,29,29,.28);  border:.5px solid rgba(239,68,68,.22);  }
+    .tile-purple  { background:rgba(76,29,149,.28);  border:.5px solid rgba(167,139,250,.22);}
+    .tile-green   { background:rgba(20,83,45,.28);   border:.5px solid rgba(134,239,172,.18);}
+    .tile-neutral { background:rgba(30,41,59,.28);   border:.5px solid rgba(148,163,184,.18);}
   }
-  .fs-row{ display:flex; flex-direction:column; gap:2px; }
-  .fs-lbl{ font-size:9px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text3); }
-  .fs-val{ font-size:12px; font-weight:600; color:var(--text2); }
-  .fs-val.done{ color:var(--green); }
-
-  /* ── Flame panel ── */
-  .flame-panel{
-    flex:0 0 74px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:12px 0 14px 0;
-    gap:7px;
-  }
-  .flame-scene{
-    position:relative;
-    width:50px; height:68px;
-    transform-origin:center bottom;
-    transition:transform .75s ease, opacity .75s ease, filter .75s ease;
-  }
-  #flameSvg{
-    position:absolute;
-    top:0; left:0;
-    width:100%; height:100%;
-    overflow:visible;
-  }
-
-  /* SVG flame layer animations */
-  .fl-outer,.fl-mid,.fl-core,.fl-burst{
-    transform-box:fill-box;
-    transform-origin:center bottom;
-  }
-  .fl-outer{ animation:fo 2.2s ease-in-out infinite; }
-  .fl-mid  { animation:fm 1.5s ease-in-out infinite; }
-  .fl-core { animation:fc 1.0s ease-in-out infinite; }
-  .fl-burst{ opacity:0; pointer-events:none; }
-  .fl-burst.pop{ animation:burst .55s ease-out forwards; }
-
-  /* Heavier flicker keyframes */
-  @keyframes fo{
-    0%,100%{ transform:scaleX(1)    scaleY(1)    rotate(-2.2deg); }
-    10%    { transform:scaleX(.88)  scaleY(1.10) rotate(1.8deg);  }
-    22%    { transform:scaleX(1.10) scaleY(.91)  rotate(-1deg);   }
-    35%    { transform:scaleX(.92)  scaleY(1.07) rotate(2.5deg);  }
-    50%    { transform:scaleX(1.08) scaleY(.93)  rotate(-1.5deg); }
-    64%    { transform:scaleX(.90)  scaleY(1.09) rotate(1.2deg);  }
-    78%    { transform:scaleX(1.06) scaleY(.94)  rotate(-2deg);   }
-    90%    { transform:scaleX(.94)  scaleY(1.05) rotate(1.5deg);  }
-  }
-  @keyframes fm{
-    0%,100%{ transform:scaleX(1)    scaleY(1)    rotate(1.5deg);  }
-    15%    { transform:scaleX(1.12) scaleY(.89)  rotate(-2deg);   }
-    32%    { transform:scaleX(.88)  scaleY(1.12) rotate(1deg);    }
-    50%    { transform:scaleX(1.10) scaleY(.91)  rotate(-1.5deg); }
-    70%    { transform:scaleX(.90)  scaleY(1.10) rotate(2deg);    }
-    88%    { transform:scaleX(1.08) scaleY(.93)  rotate(-1deg);   }
-  }
-  @keyframes fc{
-    0%,100%{ transform:scaleX(1)    scaleY(1);   }
-    25%    { transform:scaleX(.82)  scaleY(1.18); }
-    55%    { transform:scaleX(1.18) scaleY(.84); }
-    80%    { transform:scaleX(.88)  scaleY(1.12); }
-  }
-
-  /* Burst: shoots upward and fades */
-  @keyframes burst{
-    0%  { opacity:.75; transform:scaleX(1)   scaleY(1)   translateY(0);    }
-    45% { opacity:.30; transform:scaleX(.70) scaleY(1.45) translateY(-16px); }
-    100%{ opacity:0;   transform:scaleX(.45) scaleY(1.80) translateY(-28px); }
-  }
-
-  /* Flame label */
-  .flame-label{ font-size:10px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text3); text-align:center; transition:color .75s ease; white-space:nowrap; }
-
-  /* Responsive */
-  @media (max-width:1100px){
+  @media (max-width:1150px){
     .tracker-card{ flex-direction:column; }
-    .section-sep{ width:auto; height:.5px; margin:0 12px; }
-    .group-cells{ flex-wrap:wrap; }
+    .section-sep { width:auto; height:.5px; margin:0 11px; }
+    .group-cells { flex-wrap:wrap; }
     .ziel-wrapper{ flex:unset; }
     .flame-wrapper{ border-left:none; border-top:.5px solid var(--border2); }
-    .flame-stats{ flex-direction:row; border-right:none; border-bottom:.5px solid var(--border); gap:20px; padding:10px 16px; }
-    .flame-panel{ flex:1; }
-    .flame-scene{ width:42px; height:57px; }
+    .flame-stats { flex-direction:row; border-right:none; border-bottom:.5px solid var(--border); gap:20px; padding:10px 16px; }
+    .flame-panel { flex:1; }
   }
   @media (max-width:500px){
     body{ padding:1rem .75rem; }
-    .cell-value{ font-size:22px; }
-    .cell-value.timer{ font-size:17px; }
-    .aq-value{ font-size:22px; }
-    .ziel-input{ font-size:18px; width:54px; }
+    .cell-value{ font-size:19px; }
+    .v-timer{ font-size:15px; }
+    .aq-value{ font-size:19px; }
+    .ziel-input{ font-size:17px; width:44px; }
   }
 </style>
 </head>
@@ -254,12 +262,12 @@
         <div class="group-divider-line"></div>
       </div>
       <div class="group-cells">
-        <div class="cell ziel-cell">
+        <div class="cell ziel-cell tile-blue">
           <div class="cell-label">Anwahlen</div>
           <input type="number" class="ziel-input" id="ziel-anrufe" min="0" placeholder="0" oninput="setZiel('anwahlenZiel',this.value)">
           <div class="ziel-prog" id="prog-anrufe">–</div>
         </div>
-        <div class="cell ziel-cell">
+        <div class="cell ziel-cell tile-green">
           <div class="cell-label">Terminiert</div>
           <input type="number" class="ziel-input" id="ziel-termin" min="0" placeholder="0" oninput="setZiel('terminZiel',this.value)">
           <div class="ziel-prog" id="prog-termin">–</div>
@@ -276,37 +284,42 @@
         <div class="group-divider-line"></div>
       </div>
       <div class="group-cells">
-        <div class="cell">
+
+        <div class="cell tile-blue">
           <div class="cell-label">Anwahlen</div>
-          <div class="cell-value blue" id="val-anrufe">0</div>
+          <div class="cell-value v-blue" id="val-anrufe">0</div>
           <div class="btn-row">
-            <button class="btn-sm btn-minus-blue" onclick="change('anrufe',-1)">−</button>
-            <button class="btn-sm btn-plus-blue"  onclick="change('anrufe',1)">+</button>
+            <button class="btn-sm btn-m-blue" onclick="change('anrufe',-1)">−</button>
+            <button class="btn-sm btn-p-blue" onclick="change('anrufe',1)">+</button>
           </div>
         </div>
-        <div class="cell">
+
+        <div class="cell tile-slate">
           <div class="cell-label">Abnahmen</div>
-          <div class="cell-value green" id="val-abnahmen">0</div>
+          <div class="cell-value v-slate" id="val-abnahmen">0</div>
           <div class="btn-row">
-            <button class="btn-sm btn-minus-green" onclick="change('abnahmen',-1)">−</button>
-            <button class="btn-sm btn-plus-green"  onclick="change('abnahmen',1)">+</button>
+            <button class="btn-sm btn-m-slate" onclick="change('abnahmen',-1)">−</button>
+            <button class="btn-sm btn-p-slate" onclick="change('abnahmen',1)">+</button>
           </div>
         </div>
-        <div class="cell aq-cell">
+
+        <div class="cell aq-cell tile-slate">
           <div class="cell-label">Abnahmequote</div>
           <div class="aq-value" id="pickupRate">0%</div>
         </div>
-        <div class="cell">
+
+        <div class="cell tile-neutral">
           <div class="cell-label">Dauer</div>
-          <div class="cell-value neutral timer" id="val-timer">00:00:00</div>
+          <div class="cell-value v-neutral v-timer" id="val-timer">00:00:00</div>
           <div class="btn-row">
             <button class="timer-btn" id="timerBtn" onclick="toggleTimer()">
-              <svg id="timerIcon" width="11" height="11" viewBox="0 0 12 12" fill="currentColor">
+              <svg id="timerIcon" width="10" height="10" viewBox="0 0 12 12" fill="currentColor">
                 <polygon points="2,1 11,6 2,11"/>
               </svg>
             </button>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -319,46 +332,72 @@
         <div class="group-divider-line"></div>
       </div>
       <div class="group-cells">
-        <div class="cell">
+
+        <div class="cell tile-blue">
           <div class="cell-label">Entscheider erreicht</div>
           <div class="value-row">
-            <div class="cell-value blue" id="val-inhaber">0</div>
-            <div class="pct-badge pct-blue" id="pct-inhaber">0%</div>
+            <div class="cell-value v-blue" id="val-inhaber">0</div>
+            <div class="pct-badge pb-blue" id="pct-inhaber">0%</div>
           </div>
           <div class="btn-row">
-            <button class="btn-sm btn-minus-blue" onclick="change('inhaber',-1)">−</button>
-            <button class="btn-sm btn-plus-blue"  onclick="change('inhaber',1)">+</button>
+            <button class="btn-sm btn-m-blue" onclick="change('inhaber',-1)">−</button>
+            <button class="btn-sm btn-p-blue" onclick="change('inhaber',1)">+</button>
           </div>
         </div>
-        <div class="cell">
+
+        <div class="cell tile-amber">
           <div class="cell-label">Pitch abgeschlossen</div>
           <div class="value-row">
-            <div class="cell-value amber" id="val-pitch">0</div>
-            <div class="pct-badge pct-amber" id="pct-pitch">0%</div>
+            <div class="cell-value v-amber" id="val-pitch">0</div>
+            <div class="pct-badge pb-amber" id="pct-pitch">0%</div>
           </div>
           <div class="btn-row">
-            <button class="btn-sm btn-minus-amber" onclick="change('pitch',-1)">−</button>
-            <button class="btn-sm btn-plus-amber"  onclick="change('pitch',1)">+</button>
+            <button class="btn-sm btn-m-amber" onclick="change('pitch',-1)">−</button>
+            <button class="btn-sm btn-p-amber" onclick="change('pitch',1)">+</button>
           </div>
         </div>
-        <div class="cell">
+
+        <div class="cell tile-rose">
+          <div class="cell-label">Neins erhalten</div>
+          <div class="value-row">
+            <div class="cell-value v-rose" id="val-neins">0</div>
+            <div class="pct-badge pb-rose" id="pct-neins">0%</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-sm btn-m-rose" onclick="change('neins',-1)">−</button>
+            <button class="btn-sm btn-p-rose" onclick="change('neins',1)">+</button>
+          </div>
+        </div>
+
+        <div class="cell tile-purple">
+          <div class="cell-label">Follow-up vereinbart</div>
+          <div class="value-row">
+            <div class="cell-value v-purple" id="val-followups">0</div>
+            <div class="pct-badge pb-purple" id="pct-followups">0%</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-sm btn-m-purple" onclick="change('followups',-1)">−</button>
+            <button class="btn-sm btn-p-purple" onclick="change('followups',1)">+</button>
+          </div>
+        </div>
+
+        <div class="cell tile-green">
           <div class="cell-label">Termin vereinbart</div>
           <div class="value-row">
-            <div class="cell-value green" id="val-termin">0</div>
-            <div class="pct-badge pct-green" id="pct-termin">0%</div>
+            <div class="cell-value v-green" id="val-termin">0</div>
+            <div class="pct-badge pb-green" id="pct-termin">0%</div>
           </div>
           <div class="btn-row">
-            <button class="btn-sm btn-minus-green" onclick="change('termin',-1)">−</button>
-            <button class="btn-sm btn-plus-green"  onclick="change('termin',1)">+</button>
+            <button class="btn-sm btn-m-green" onclick="change('termin',-1)">−</button>
+            <button class="btn-sm btn-p-green" onclick="change('termin',1)">+</button>
           </div>
         </div>
+
       </div>
     </div>
 
-    <!-- FLAME WRAPPER -->
+    <!-- FLAME -->
     <div class="flame-wrapper">
-
-      <!-- Stats links von der Flamme -->
       <div class="flame-stats">
         <div class="fs-row">
           <span class="fs-lbl">Anwahl</span>
@@ -369,66 +408,51 @@
           <span class="fs-val" id="fstat-t">–</span>
         </div>
       </div>
-
-      <!-- Flamme -->
       <div class="flame-panel">
         <div class="flame-scene" id="flameScene">
-          <!-- SVG Duolingo-style teardrop flame -->
           <svg id="flameSvg" viewBox="0 0 50 68" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <!-- Outer gradient -->
               <linearGradient id="gOuter" x1="0" y1="1" x2="0" y2="0" gradientUnits="objectBoundingBox">
                 <stop id="gO1" offset="0%"   stop-color="#0A2648"/>
                 <stop id="gO2" offset="100%" stop-color="#185FA5"/>
               </linearGradient>
-              <!-- Mid gradient -->
               <linearGradient id="gMid" x1="0" y1="1" x2="0" y2="0" gradientUnits="objectBoundingBox">
                 <stop id="gM1" offset="0%"   stop-color="#185FA5"/>
                 <stop id="gM2" offset="100%" stop-color="#60A8E0"/>
               </linearGradient>
-              <!-- Core gradient (white teardrop highlight – always light) -->
               <linearGradient id="gCore" x1="0" y1="1" x2="0" y2="0" gradientUnits="objectBoundingBox">
                 <stop id="gK1" offset="0%"   stop-color="rgba(255,255,255,.50)"/>
                 <stop id="gK2" offset="100%" stop-color="rgba(255,255,255,.95)"/>
               </linearGradient>
             </defs>
-
-            <!-- Burst (shoots up on increment) -->
             <path class="fl-burst" id="flBurst" fill="url(#gOuter)"
               d="M25 5 C37 13 47 31 47 47 C47 59 37.7 67 25 67 C12.3 67 3 59 3 47 C3 31 13 13 25 5Z"/>
-
-            <!-- Outer flame body -->
             <path class="fl-outer" fill="url(#gOuter)"
               d="M25 5 C37 13 47 31 47 47 C47 59 37.7 67 25 67 C12.3 67 3 59 3 47 C3 31 13 13 25 5Z"/>
-
-            <!-- Mid flame -->
             <path class="fl-mid" fill="url(#gMid)"
               d="M25 15 C35 22 43 37 43 49 C43 59.5 35 66 25 66 C15 66 7 59.5 7 49 C7 37 15 22 25 15Z"/>
-
-            <!-- Inner white teardrop -->
             <path class="fl-core" fill="url(#gCore)"
               d="M25 37 C30 41 33 47 33 52 C33 57.5 29.5 62 25 62 C20.5 62 17 57.5 17 52 C17 47 20 41 25 37Z"/>
           </svg>
         </div>
         <div class="flame-label" id="flameLabel">–</div>
       </div>
-
-    </div><!-- /.flame-wrapper -->
+    </div>
 
   </div><!-- /.tracker-card -->
 </div>
 
 <script>
-const KEY = 'kp_cold_call_v2';
+const KEY = 'kp_cold_call_v3';
 
 let state = {
-  anrufe:0, abnahmen:0, inhaber:0, pitch:0, termin:0,
+  anrufe:0, abnahmen:0, inhaber:0, pitch:0, neins:0, followups:0, termin:0,
   elapsed:0, running:false, startedAt:null, sessionDate:null,
   anwahlenZiel:0, terminZiel:0
 };
 let interval=null, saveTimer=null;
 
-// Flame elements
+// Flame refs
 const flameScene = document.getElementById('flameScene');
 const flBurst    = document.getElementById('flBurst');
 const flameLabel = document.getElementById('flameLabel');
@@ -436,7 +460,47 @@ const gO1=document.getElementById('gO1'), gO2=document.getElementById('gO2');
 const gM1=document.getElementById('gM1'), gM2=document.getElementById('gM2');
 const gK1=document.getElementById('gK1'), gK2=document.getElementById('gK2');
 
-// ── Intensity levels (driven by Anwahlen progress) ─────────────────────────
+// ── Timer (wall-clock based – background-safe) ──────────────────────────────
+// state.elapsed = accumulated seconds from previous paused sessions
+// state.startedAt = Date.now() when current session started
+// getDisplayElapsed() always computes correct time regardless of tab state
+
+function getDisplayElapsed() {
+  if (state.running && state.startedAt) {
+    return state.elapsed + Math.floor((Date.now() - state.startedAt) / 1000);
+  }
+  return state.elapsed;
+}
+
+function startInterval() {
+  clearInterval(interval);
+  interval = setInterval(() => {
+    renderTimer();
+    const d = getDisplayElapsed();
+    if (d > 0 && d % 15 === 0) save();
+  }, 1000);
+}
+
+function toggleTimer() {
+  if (state.running) {
+    state.elapsed = getDisplayElapsed(); // freeze elapsed before stopping
+    state.running  = false;
+    state.startedAt = null;
+    clearInterval(interval);
+  } else {
+    state.running   = true;
+    state.startedAt = Date.now();
+    startInterval();
+  }
+  renderTimer(); save();
+}
+
+// Refresh display when tab becomes visible again
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && state.running) renderTimer();
+});
+
+// ── Flame tiers ─────────────────────────────────────────────────────────────
 const INTENSITIES = [
   { max:0.00,  scale:.28, opacity:.12, speed:5.5  },
   { max:0.15,  scale:.44, opacity:.28, speed:4.2  },
@@ -447,11 +511,6 @@ const INTENSITIES = [
   { max:0.90,  scale:.96, opacity:.92, speed:1.05 },
   { max:Infinity, scale:1.08, opacity:1.0, speed:.78 },
 ];
-
-// ── Tier definitions (driven by Termin progress in 6ths) ───────────────────
-//  c=[outerBottom, outerTop]  m=[midBottom, midTop]  k=[coreBottom, coreTop]
-//  Thresholds: ≥1/6 Bronze, ≥2/6 Silver, ≥3/6 Gold,
-//              ≥4/6 Platin, ≥5/6 Diamant, ≥6/6 Obsidian
 const TIERS = {
   none:    { thr:0,    c:['#0A2648','#185FA5'], m:['#185FA5','#60A8E0'], k:['rgba(255,255,255,.50)','rgba(210,232,255,.95)'], glow:'24,95,165',    lbl:null,          lc:'' },
   bronze:  { thr:1/6,  c:['#4A1E06','#9A4C14'], m:['#9A4C14','#D07830'], k:['rgba(255,220,150,.55)','rgba(255,245,205,.95)'], glow:'154,76,20',   lbl:'🥉 Bronze',   lc:'#9A6030' },
@@ -464,84 +523,59 @@ const TIERS = {
 const TIER_ORDER = ['obsidian','diamant','platin','gold','silver','bronze','none'];
 
 function pickIntensity(pct) {
-  for (const lvl of INTENSITIES) { if (pct <= lvl.max) return lvl; }
+  for (const l of INTENSITIES) { if (pct <= l.max) return l; }
   return INTENSITIES[INTENSITIES.length-1];
 }
 function pickTier(pct) {
-  for (const key of TIER_ORDER) { if (pct >= TIERS[key].thr) return TIERS[key]; }
+  for (const k of TIER_ORDER) { if (pct >= TIERS[k].thr) return TIERS[k]; }
   return TIERS.none;
 }
 
-// ── Flame update ───────────────────────────────────────────────────────────
 function updateFlame() {
-  const az = state.anwahlenZiel || 0;
-  const tz = state.terminZiel   || 0;
-  const anrufePct = az > 0 ? Math.min(1, state.anrufe / az) : 0;
-  const terminPct = tz > 0 ? Math.min(1, state.termin / tz) : 0;
+  const az = state.anwahlenZiel||0, tz = state.terminZiel||0;
+  const ap = az > 0 ? Math.min(1, state.anrufe/az) : 0;
+  const tp = tz > 0 ? Math.min(1, state.termin/tz) : 0;
+  const I  = pickIntensity(ap);
+  const T  = tz > 0 ? pickTier(tp) : TIERS.none;
 
-  const intens = pickIntensity(anrufePct);
-  const tier   = tz > 0 ? pickTier(terminPct) : TIERS.none;
+  flameScene.style.transform = `scale(${I.scale})`;
+  flameScene.style.opacity   = I.opacity;
+  if (ap > 0.05 && az > 0) {
+    const r=Math.round(5+ap*22), a=(0.18+ap*0.67).toFixed(2);
+    flameScene.style.filter = `drop-shadow(0 0 ${r}px rgba(${T.glow},${a}))`;
+  } else { flameScene.style.filter='none'; }
 
-  // Scale + opacity from Anwahlen
-  flameScene.style.transform = `scale(${intens.scale})`;
-  flameScene.style.opacity   = intens.opacity;
+  document.querySelector('.fl-outer').style.animationDuration = I.speed+'s';
+  document.querySelector('.fl-mid').style.animationDuration   = (I.speed*.68)+'s';
+  document.querySelector('.fl-core').style.animationDuration  = (I.speed*.44)+'s';
 
-  // Glow: radius/alpha from intensity, color from tier
-  if (anrufePct > 0.05 && az > 0) {
-    const r = Math.round(5 + anrufePct * 22);
-    const a = (0.18 + anrufePct * 0.67).toFixed(2);
-    flameScene.style.filter = `drop-shadow(0 0 ${r}px rgba(${tier.glow},${a}))`;
-  } else {
-    flameScene.style.filter = 'none';
-  }
+  gO1.setAttribute('stop-color',T.c[0]); gO2.setAttribute('stop-color',T.c[1]);
+  gM1.setAttribute('stop-color',T.m[0]); gM2.setAttribute('stop-color',T.m[1]);
+  gK1.setAttribute('stop-color',T.k[0]); gK2.setAttribute('stop-color',T.k[1]);
 
-  // Flicker speed from Anwahlen
-  const sp = intens.speed;
-  document.querySelector('.fl-outer').style.animationDuration = sp + 's';
-  document.querySelector('.fl-mid').style.animationDuration   = (sp*.68) + 's';
-  document.querySelector('.fl-core').style.animationDuration  = (sp*.44) + 's';
+  flameLabel.textContent = !az&&!tz ? '–' : T.lbl ? T.lbl : (az>0 ? Math.round(ap*100)+'%' : '–');
+  flameLabel.style.color = T.lc||'';
 
-  // Gradient colors from tier
-  gO1.setAttribute('stop-color', tier.c[0]);
-  gO2.setAttribute('stop-color', tier.c[1]);
-  gM1.setAttribute('stop-color', tier.m[0]);
-  gM2.setAttribute('stop-color', tier.m[1]);
-  gK1.setAttribute('stop-color', tier.k[0]);
-  gK2.setAttribute('stop-color', tier.k[1]);
-
-  // Label
-  if (!az && !tz) {
-    flameLabel.textContent = '–'; flameLabel.style.color = '';
-  } else if (tier.lbl) {
-    flameLabel.textContent = tier.lbl; flameLabel.style.color = tier.lc;
-  } else {
-    flameLabel.textContent = az > 0 ? Math.round(anrufePct*100)+'%' : '–';
-    flameLabel.style.color = '';
-  }
-
-  // Flame-stats column
   renderFlameStat('fstat-a', state.anrufe, az);
   renderFlameStat('fstat-t', state.termin, tz);
 }
 
 function renderFlameStat(elId, cur, ziel) {
-  const el = document.getElementById(elId);
-  if (!ziel) { el.textContent = '–'; el.className = 'fs-val'; return; }
-  const pct  = Math.min(100, Math.round(cur/ziel*100));
-  const done = pct >= 100;
-  el.textContent = pct + '%';
-  el.className = 'fs-val' + (done ? ' done' : '');
+  const el=document.getElementById(elId);
+  if (!ziel) { el.textContent='–'; el.className='fs-val'; return; }
+  const pct=Math.min(100,Math.round(cur/ziel*100));
+  el.textContent=pct+'%';
+  el.className='fs-val'+(pct>=100?' done':'');
 }
 
-// ── Burst animation ────────────────────────────────────────────────────────
 function triggerBurst() {
   flBurst.classList.remove('pop');
   void flBurst.getBoundingClientRect();
   flBurst.classList.add('pop');
-  setTimeout(() => flBurst.classList.remove('pop'), 600);
+  setTimeout(()=>flBurst.classList.remove('pop'), 600);
 }
 
-// ── Save / Load ────────────────────────────────────────────────────────────
+// ── Save / Load ──────────────────────────────────────────────────────────────
 function load() {
   try {
     const raw = localStorage.getItem(KEY);
@@ -549,8 +583,7 @@ function load() {
       const s = JSON.parse(raw);
       state = {...state, ...s};
       if (state.running && state.startedAt) {
-        state.elapsed += Math.floor((Date.now()-state.startedAt)/1000);
-        state.startedAt = Date.now();
+        // startedAt is stored; getDisplayElapsed() will compute live from it
         startInterval();
       }
     }
@@ -565,7 +598,7 @@ function todayStr() {
   return new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
 function save() {
-  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {}
+  try { localStorage.setItem(KEY,JSON.stringify(state)); } catch(e) {}
   setSave('saved');
 }
 function scheduleSave() {
@@ -573,38 +606,45 @@ function scheduleSave() {
   saveTimer = setTimeout(save, 600);
 }
 function setSave(s) {
-  document.getElementById('saveDot').className = 'save-dot'+(s==='saving'?' saving':'');
-  document.getElementById('saveLabel').textContent = s==='saving' ? 'Wird gespeichert…' : 'Gespeichert';
+  document.getElementById('saveDot').className='save-dot'+(s==='saving'?' saving':'');
+  document.getElementById('saveLabel').textContent=s==='saving'?'Wird gespeichert…':'Gespeichert';
 }
 
-// ── Mutations ──────────────────────────────────────────────────────────────
-function change(k, d) {
-  state[k] = Math.max(0, state[k]+d);
-  if (d > 0 && (k==='anrufe'||k==='termin')) triggerBurst();
+// ── Mutations ────────────────────────────────────────────────────────────────
+function change(k,d) {
+  state[k]=Math.max(0,state[k]+d);
+  if (d>0&&(k==='anrufe'||k==='termin')) triggerBurst();
   render(); scheduleSave();
 }
-function setZiel(k, v) {
-  state[k] = Math.max(0, parseInt(v)||0);
+function setZiel(k,v) {
+  state[k]=Math.max(0,parseInt(v)||0);
   render(); scheduleSave();
 }
 
-// ── Render ─────────────────────────────────────────────────────────────────
+// ── Render ───────────────────────────────────────────────────────────────────
 function render() {
   document.getElementById('val-anrufe').textContent   = state.anrufe;
   document.getElementById('val-abnahmen').textContent = state.abnahmen;
   document.getElementById('val-inhaber').textContent  = state.inhaber;
   document.getElementById('val-pitch').textContent    = state.pitch;
+  document.getElementById('val-neins').textContent    = state.neins;
+  document.getElementById('val-followups').textContent= state.followups;
   document.getElementById('val-termin').textContent   = state.termin;
 
   const aqRate = state.anrufe>0 ? Math.round(state.abnahmen/state.anrufe*100) : 0;
   document.getElementById('pickupRate').textContent = aqRate+'%';
 
-  const iPct = state.abnahmen>0 ? Math.round(state.inhaber/state.abnahmen*100) : 0;
-  const pPct = state.inhaber >0 ? Math.round(state.pitch  /state.inhaber *100) : 0;
-  const tPct = state.pitch   >0 ? Math.round(state.termin /state.pitch   *100) : 0;
-  document.getElementById('pct-inhaber').textContent = iPct+'%';
-  document.getElementById('pct-pitch').textContent   = pPct+'%';
-  document.getElementById('pct-termin').textContent  = tPct+'%';
+  // Performance percentages (each as share of the previous funnel step)
+  const iPct = state.abnahmen>0 ? Math.round(state.inhaber  /state.abnahmen*100) : 0;
+  const pPct = state.inhaber >0 ? Math.round(state.pitch    /state.inhaber *100) : 0;
+  const nPct = state.pitch   >0 ? Math.round(state.neins    /state.pitch   *100) : 0;
+  const fPct = state.pitch   >0 ? Math.round(state.followups/state.pitch   *100) : 0;
+  const tPct = state.pitch   >0 ? Math.round(state.termin   /state.pitch   *100) : 0;
+  document.getElementById('pct-inhaber').textContent  = iPct+'%';
+  document.getElementById('pct-pitch').textContent    = pPct+'%';
+  document.getElementById('pct-neins').textContent    = nPct+'%';
+  document.getElementById('pct-followups').textContent= fPct+'%';
+  document.getElementById('pct-termin').textContent   = tPct+'%';
 
   renderZielProg(state.anrufe, state.anwahlenZiel, 'prog-anrufe');
   renderZielProg(state.termin, state.terminZiel,   'prog-termin');
@@ -613,14 +653,15 @@ function render() {
 }
 
 function renderZielProg(cur, ziel, elId) {
-  const el = document.getElementById(elId);
+  const el=document.getElementById(elId);
   if (!ziel) { el.innerHTML='–'; return; }
   const pct=Math.min(100,Math.round(cur/ziel*100)), done=pct>=100;
   el.innerHTML=`<span class="prog-pct${done?' prog-done':''}">${pct}%</span>`;
 }
 
 function renderTimer() {
-  const s=state.elapsed, h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sc=s%60;
+  const s = getDisplayElapsed();
+  const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sc=s%60;
   document.getElementById('val-timer').textContent =
     String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');
   const btn=document.getElementById('timerBtn'), icon=document.getElementById('timerIcon');
@@ -633,22 +674,17 @@ function renderTimer() {
   }
 }
 
-function startInterval() {
-  clearInterval(interval);
-  interval = setInterval(()=>{ state.elapsed++; renderTimer(); if(state.elapsed%15===0) save(); },1000);
-}
-function toggleTimer() {
-  if (state.running) { state.running=false; state.startedAt=null; clearInterval(interval); }
-  else { state.running=true; state.startedAt=Date.now(); startInterval(); }
-  renderTimer(); save();
-}
 function askReset()    { document.getElementById('confirmBox').classList.add('visible'); }
 function cancelReset() { document.getElementById('confirmBox').classList.remove('visible'); }
 function doReset() {
   clearInterval(interval);
-  state = { anrufe:0,abnahmen:0,inhaber:0,pitch:0,termin:0, elapsed:0,running:false,startedAt:null,sessionDate:todayStr(), anwahlenZiel:state.anwahlenZiel, terminZiel:state.terminZiel };
+  state = {
+    anrufe:0, abnahmen:0, inhaber:0, pitch:0, neins:0, followups:0, termin:0,
+    elapsed:0, running:false, startedAt:null, sessionDate:todayStr(),
+    anwahlenZiel:state.anwahlenZiel, terminZiel:state.terminZiel
+  };
   document.getElementById('confirmBox').classList.remove('visible');
-  document.getElementById('sessionDate').textContent = state.sessionDate;
+  document.getElementById('sessionDate').textContent=state.sessionDate;
   render(); localStorage.removeItem(KEY); setSave('saved');
 }
 
